@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "exobengal-api/app.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/exobengal-api/app.py"
+    }
+  ],
+  "env": {
+    "PYTHONPATH": "/var/task"
+  }
+}
