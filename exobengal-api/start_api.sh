@@ -3,14 +3,6 @@
 
 echo "🚀 Starting ExoBengal API Server..."
 
-# Check if we're in a conda environment
-if [[ $CONDA_DEFAULT_ENV ]]; then
-    echo "📦 Using conda environment: $CONDA_DEFAULT_ENV"
-else
-    echo "📦 Activating py310 environment..."
-    source ~/apps/anaconda3/etc/profile.d/conda.sh
-    conda activate py310
-fi
 
 # Install/upgrade requirements
 echo "📦 Installing/upgrading requirements..."

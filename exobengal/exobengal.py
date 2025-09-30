@@ -172,7 +172,9 @@ class DetectExoplanet:
         label = "Planet" if prediction == 1 else "Not a Planet"
 
         result = {"prediction": label, "probability": float(probability)}
+
         print(f"input array: {input_array}")
+        
         if label == "Planet":
             result["ESI"] = self.calculate_esi(input_array[0][1], input_array[0][2])
         return result

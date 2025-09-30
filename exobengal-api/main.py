@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional
 import uvicorn
 from exobengal.exobengal import DetectExoplanet
 import warnings
@@ -40,14 +40,20 @@ class ExoplanetInput(BaseModel):
     impact: float = Field(..., description="Impact parameter (related to transit geometry)", example=0.1)
     duration: float = Field(..., description="Transit duration (hours)", example=5.0)
     depth: float = Field(..., description="Transit depth (parts per million)", example=100.0)
+    models: Optional[List[str]] = Field(
+        default=None, 
+        description="Specific models to run. Options: 'random_forest', 'decision_tree', 'knn', 'cnn'. If not specified, all models will run.",
+        example=["random_forest", "cnn"]
+    )
 
 class PredictionResponse(BaseModel):
-    random_forest: Dict[str, Any]
-    decision_tree: Dict[str, Any]
-    knn: Dict[str, Any]
-    cnn: Dict[str, Any]
+    random_forest: Optional[Dict[str, Any]] = None
+    decision_tree: Optional[Dict[str, Any]] = None
+    knn: Optional[Dict[str, Any]] = None
+    cnn: Optional[Dict[str, Any]] = None
     esi: float
-    input_data: Dict[str, float]
+    input_data: Dict[str, Any]
+    models_executed: List[str]
 
 class HealthResponse(BaseModel):
     status: str
@@ -73,7 +79,7 @@ async def health_check():
 @app.post("/predict", response_model=PredictionResponse)
 async def predict_exoplanet(input_data: ExoplanetInput):
     """
-    Predict exoplanet characteristics using all available models
+    Predict exoplanet characteristics using specified or all available models
     
     Parameters:
     - period: Orbital period (days)
@@ -85,8 +91,9 @@ async def predict_exoplanet(input_data: ExoplanetInput):
     - impact: Impact parameter (related to transit geometry)
     - duration: Transit duration (hours)
     - depth: Transit depth (parts per million)
+    - models: Optional list of specific models to run ['random_forest', 'decision_tree', 'knn', 'cnn']
     
-    Returns predictions from all models and ESI calculation
+    Returns predictions from specified models and ESI calculation
     """
     try:
         # Convert input to list format expected by models
@@ -102,28 +109,58 @@ async def predict_exoplanet(input_data: ExoplanetInput):
             input_data.depth
         ]
         
-        # Get predictions from all models
-        predictions = {}
-        models = ["random_forest", "decision_tree", "knn", "cnn"]
+        # Determine which models to run
+        available_models = ["random_forest", "decision_tree", "knn", "cnn"]
+        if input_data.models is not None:
+            # Validate specified models
+            invalid_models = [m for m in input_data.models if m not in available_models]
+            if invalid_models:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"Invalid model(s): {invalid_models}. Available models: {available_models}"
+                )
+            models_to_run = input_data.models
+        else:
+            models_to_run = available_models
         
-        for model in models:
-            prediction = getattr(detector, model)(sample)
-            predictions[model] = {
-                "prediction": prediction,
-                "model_type": model.replace("_", " ").title()
-            }
+        # Get predictions from specified models
+        predictions = {}
+        models_executed = []
+        
+        for model in models_to_run:
+            try:
+                prediction = getattr(detector, model)(sample)
+                predictions[model] = {
+                    "prediction": prediction,
+                    "model_type": model.replace("_", " ").title()
+                }
+                models_executed.append(model)
+            except Exception as model_error:
+                # Log model-specific error but continue with other models
+                print(f"Error running {model}: {model_error}")
+                predictions[model] = {
+                    "error": f"Model execution failed: {str(model_error)}",
+                    "model_type": model.replace("_", " ").title()
+                }
         
         # Calculate ESI
         esi = detector.calculate_esi(input_data.prad, input_data.teq)
         
-        return PredictionResponse(
-            random_forest=predictions["random_forest"],
-            decision_tree=predictions["decision_tree"],
-            knn=predictions["knn"],
-            cnn=predictions["cnn"],
-            esi=esi,
-            input_data=input_data.dict()
-        )
+        # Prepare response with only the models that were requested
+        response_data = {
+            "esi": esi,
+            "input_data": input_data.dict(),
+            "models_executed": models_executed
+        }
+        
+        # Add model predictions to response
+        for model in available_models:
+            if model in predictions:
+                response_data[model] = predictions[model]
+            else:
+                response_data[model] = None
+        
+        return PredictionResponse(**response_data)
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
@@ -153,16 +190,38 @@ async def predict_batch(samples: Dict[str, ExoplanetInput]):
                 input_data.depth
             ]
             
-            # Get predictions
-            predictions = {}
-            models = ["random_forest", "decision_tree", "knn", "cnn"]
+            # Determine which models to run for this sample
+            available_models = ["random_forest", "decision_tree", "knn", "cnn"]
+            if input_data.models is not None:
+                # Validate specified models
+                invalid_models = [m for m in input_data.models if m not in available_models]
+                if invalid_models:
+                    results[sample_name] = {
+                        "error": f"Invalid model(s): {invalid_models}. Available models: {available_models}",
+                        "input_data": input_data.dict()
+                    }
+                    continue
+                models_to_run = input_data.models
+            else:
+                models_to_run = available_models
             
-            for model in models:
-                prediction = getattr(detector, model)(sample)
-                predictions[model] = {
-                    "prediction": prediction,
-                    "model_type": model.replace("_", " ").title()
-                }
+            # Get predictions for this sample
+            predictions = {}
+            models_executed = []
+            
+            for model in models_to_run:
+                try:
+                    prediction = getattr(detector, model)(sample)
+                    predictions[model] = {
+                        "prediction": prediction,
+                        "model_type": model.replace("_", " ").title()
+                    }
+                    models_executed.append(model)
+                except Exception as model_error:
+                    predictions[model] = {
+                        "error": f"Model execution failed: {str(model_error)}",
+                        "model_type": model.replace("_", " ").title()
+                    }
             
             # Calculate ESI
             esi = detector.calculate_esi(input_data.prad, input_data.teq)
@@ -170,7 +229,8 @@ async def predict_batch(samples: Dict[str, ExoplanetInput]):
             results[sample_name] = {
                 "predictions": predictions,
                 "esi": esi,
-                "input_data": input_data.dict()
+                "input_data": input_data.dict(),
+                "models_executed": models_executed
             }
         
         return results
