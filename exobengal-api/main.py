@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from typing import Dict, Any, List, Optional
 import uvicorn
-from exobengal.exobengal import DetectExoplanet
+from exobengal import DetectExoplanet
 import warnings
 from sklearn.exceptions import InconsistentVersionWarning
 
@@ -21,12 +21,12 @@ app = FastAPI(
 
 # Initialize the detector
 detector = DetectExoplanet(
-    rf_model_path='./models/random_forest_classifier.pkl',
-    dt_model_path='./models/decision_tree_classifier.pkl',
-    cnn_model_path='./models/cnn_model.h5',
-    knn_model_path='./models/knn_model.pkl',
-    scaler_path='./models/scaler.pkl',
-    imputer_path='./models/imputer.pkl'
+    rf_model_path='../models/random_forest_classifier.pkl',
+    dt_model_path='../models/decision_tree_classifier.pkl',
+    cnn_model_path='../models/cnn_model.h5',
+    knn_model_path='../models/knn_model.pkl',
+    scaler_path='../models/scaler.pkl',
+    imputer_path='../models/imputer.pkl'
 )
 
 # Pydantic models for request/response
