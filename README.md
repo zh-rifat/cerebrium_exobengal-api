@@ -21,7 +21,7 @@ A powerful REST API for exoplanet detection and classification using multiple ma
 fastapi_exobengal-api/                 # Root directory
 ├── .git/                              # Git repository data
 ├── exobengal-api/                     # API application directory
-│   ├── main.py                        # FastAPI application
+│   ├── app.py                        # FastAPI application
 │   ├── requirements.txt               # Python dependencies
 │   ├── start_api.sh                   # API startup script
 │   ├── test_api.py                    # API test script
