@@ -9,7 +9,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/exobengal-api/app.py"
+      "dest": "/exobengal-api/app2.py"
     }
   ],
   "env": {
