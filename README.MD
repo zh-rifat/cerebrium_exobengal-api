@@ -18,8 +18,6 @@ ExoBengal API is a machine learning-powered exoplanet detection service deployed
 - [Response Format](#-response-format)
 - [Error Handling](#️-error-handling)
 - [Deployment Configuration](#-deployment-configuration)
-- [Development](#️-development)
-- [Performance](#-performance)
 
 ---
 
@@ -368,16 +366,11 @@ cerebrium_exobengal-api/  # Root deployment directory
 - **Availability**: 99.9% uptime on Cerebrium
 - **Throughput**: Up to 3 concurrent requests (max replicas)
 
-### Performance Tips
-- **Model Selection**: Use specific models for faster response
-- **Batch Requests**: Send multiple predictions if needed
-- **Keep Warm**: Regular requests prevent cold starts
-
 ---
 
 ## 🎯 Example Scenarios
 
-### 1. Earth-like Planet Detection
+### 1. Planet Detection
 ```bash
 # Characteristics similar to Earth
 curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/predict \
@@ -385,34 +378,6 @@ curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/
   -d '{"item": {"period": 365.0, "prad": 1.0, "teq": 288.0, "srad": 1.0, "slog_g": 4.44, "steff": 5778.0, "impact": 0.1, "duration": 5.0, "depth": 100.0}}'
 ```
 
-### 2. Hot Jupiter Detection
-```bash
-# Large, hot planet close to star
-curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/predict \
-  -H "Content-Type: application/json" \
-  -d '{"item": {"period": 3.5, "prad": 1.2, "teq": 1200.0, "srad": 1.1, "slog_g": 4.3, "steff": 6000.0, "impact": 0.2, "duration": 2.5, "depth": 5000.0}}'
-```
-
-### 3. Super Earth Detection
-```bash
-# Larger than Earth, potentially habitable
-curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/predict \
-  -H "Content-Type: application/json" \
-  -d '{"item": {"period": 22.7, "prad": 1.6, "teq": 234.0, "srad": 0.95, "slog_g": 4.5, "steff": 5200.0, "impact": 0.3, "duration": 4.2, "depth": 280.0}}'
-```
-
----
-
-## 🤝 Support & Monitoring
-
-### Dashboard
-- **Cerebrium Dashboard**: [https://dashboard.cerebrium.ai/projects/p-e08fc93f/apps/p-e08fc93f-exobengal-api](https://dashboard.cerebrium.ai/projects/p-e08fc93f/apps/p-e08fc93f-exobengal-api)
-
-### Health Monitoring
-```bash
-# Quick health check
-curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/health_check
-```
 
 ### Common Issues
 1. **Missing Parameters**: Ensure all required fields are included
