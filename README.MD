@@ -1,27 +1,27 @@
-# 🧠 ExoBengal API - Cerebrium Deployment
+# ExoBengal API - Cerebrium Deployment
 
-## 🌌 Overview
+## Overview
 
 ExoBengal API is a machine learning-powered exoplanet detection service deployed on Cerebrium. It uses multiple ML models (Random Forest, Decision Tree, KNN, and CNN) to classify celestial objects and calculate their Earth Similarity Index (ESI).
 
-**🚀 Live API Endpoint:** `https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/`
+**Live API Endpoint:** `https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/`
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Features](#-features)
-- [Available Models](#-available-models)
-- [API Endpoints](#-api-endpoints)
-- [Usage Examples](#-usage-examples)
-- [Input Parameters](#-input-parameters)
-- [Response Format](#-response-format)
-- [Error Handling](#️-error-handling)
-- [Deployment Configuration](#-deployment-configuration)
+- [Features](#features)
+- [Available Models](#available-models)
+- [API Endpoints](#api-endpoints)
+- [Usage Examples](#usage-examples)
+- [Input Parameters](#input-parameters)
+- [Response Format](#response-format)
+- [Error Handling](#error-handling)
+- [Deployment Configuration](#deployment-configuration)
 
 ---
 
-## 🎯 Features
+## Features
 
 - **Multiple ML Models**: Random Forest, Decision Tree, KNN, and CNN
 - **Earth Similarity Index**: Automatic ESI calculation
@@ -32,7 +32,7 @@ ExoBengal API is a machine learning-powered exoplanet detection service deployed
 
 ---
 
-## 🤖 Available Models
+## Available Models
 
 | Model | Type | Description |
 |-------|------|-------------|
@@ -43,7 +43,7 @@ ExoBengal API is a machine learning-powered exoplanet detection service deployed
 
 ---
 
-## 🔗 API Endpoints
+## API Endpoints
 
 ### Base URL
 ```
@@ -61,7 +61,7 @@ https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/
 
 ---
 
-## 🚀 Usage Examples
+## Usage Examples
 
 ### 1. Health Check
 
@@ -130,23 +130,274 @@ curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/
   }'
 ```
 
+### 5. Python Request Examples
+
+```python
+import requests
+import json
+
+# API Configuration
+BASE_URL = "https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api"
+HEADERS = {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+}
+
+# Health Check
+def check_health():
+    response = requests.post(f"{BASE_URL}/health_check", headers=HEADERS)
+    return response.json()
+
+# Get Model Information
+def get_model_info():
+    response = requests.post(f"{BASE_URL}/get_model_info", headers=HEADERS)
+    return response.json()
+
+# Predict with All Models
+def predict_all_models():
+    data = {
+        "item": {
+            "period": 365.0,
+            "prad": 1.0,
+            "teq": 288.0,
+            "srad": 1.0,
+            "slog_g": 4.44,
+            "steff": 5778.0,
+            "impact": 0.1,
+            "duration": 5.0,
+            "depth": 100.0
+        }
+    }
+    response = requests.post(f"{BASE_URL}/predict", headers=HEADERS, json=data)
+    return response.json()
+
+# Predict with Specific Models
+def predict_specific_models():
+    data = {
+        "item": {
+            "period": 365.0,
+            "prad": 1.0,
+            "teq": 288.0,
+            "srad": 1.0,
+            "slog_g": 4.44,
+            "steff": 5778.0,
+            "impact": 0.1,
+            "duration": 5.0,
+            "depth": 100.0,
+            "models": ["random_forest", "cnn"]
+        }
+    }
+    response = requests.post(f"{BASE_URL}/predict", headers=HEADERS, json=data)
+    return response.json()
+
+# Example usage
+if __name__ == "__main__":
+    # Check API health
+    health = check_health()
+    print("Health Check:", health)
+    
+    # Get model information
+    models = get_model_info()
+    print("Available Models:", models)
+    
+    # Make prediction
+    result = predict_all_models()
+    print("Prediction Result:", result)
+```
+
+### 6. JavaScript Request Examples
+
+```javascript
+// API Configuration
+const BASE_URL = "https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api";
+const HEADERS = {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+};
+
+// Health Check
+async function checkHealth() {
+    try {
+        const response = await fetch(`${BASE_URL}/health_check`, {
+            method: 'POST',
+            headers: HEADERS
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Health check failed:', error);
+        return null;
+    }
+}
+
+// Get Model Information
+async function getModelInfo() {
+    try {
+        const response = await fetch(`${BASE_URL}/get_model_info`, {
+            method: 'POST',
+            headers: HEADERS
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Model info request failed:', error);
+        return null;
+    }
+}
+
+// Predict with All Models
+async function predictAllModels() {
+    const data = {
+        item: {
+            period: 365.0,
+            prad: 1.0,
+            teq: 288.0,
+            srad: 1.0,
+            slog_g: 4.44,
+            steff: 5778.0,
+            impact: 0.1,
+            duration: 5.0,
+            depth: 100.0
+        }
+    };
+    
+    try {
+        const response = await fetch(`${BASE_URL}/predict`, {
+            method: 'POST',
+            headers: HEADERS,
+            body: JSON.stringify(data)
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Prediction request failed:', error);
+        return null;
+    }
+}
+
+// Predict with Specific Models
+async function predictSpecificModels() {
+    const data = {
+        item: {
+            period: 365.0,
+            prad: 1.0,
+            teq: 288.0,
+            srad: 1.0,
+            slog_g: 4.44,
+            steff: 5778.0,
+            impact: 0.1,
+            duration: 5.0,
+            depth: 100.0,
+            models: ["random_forest", "cnn"]
+        }
+    };
+    
+    try {
+        const response = await fetch(`${BASE_URL}/predict`, {
+            method: 'POST',
+            headers: HEADERS,
+            body: JSON.stringify(data)
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Specific models prediction failed:', error);
+        return null;
+    }
+}
+
+// Example usage
+async function runExamples() {
+    // Check API health
+    const health = await checkHealth();
+    console.log('Health Check:', health);
+    
+    // Get model information
+    const models = await getModelInfo();
+    console.log('Available Models:', models);
+    
+    // Make prediction
+    const result = await predictAllModels();
+    console.log('Prediction Result:', result);
+}
+
+// For Node.js
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        checkHealth,
+        getModelInfo,
+        predictAllModels,
+        predictSpecificModels
+    };
+}
+
+// For browser - auto-run examples
+// runExamples();
+```
+
+### 7. Hot Jupiter Detection Example
+
+```python
+# Python - Hot Jupiter scenario
+def detect_hot_jupiter():
+    data = {
+        "item": {
+            "period": 3.5,        # Short orbital period
+            "prad": 1.2,          # Jupiter-like radius
+            "teq": 1200.0,        # Very hot temperature
+            "srad": 1.1,          # Slightly larger star
+            "slog_g": 4.3,        # Stellar surface gravity
+            "steff": 6000.0,      # Hot star temperature
+            "impact": 0.2,        # Impact parameter
+            "duration": 2.5,      # Short transit duration
+            "depth": 5000.0,      # Deep transit (large planet)
+            "models": ["random_forest", "cnn"]
+        }
+    }
+    response = requests.post(f"{BASE_URL}/predict", headers=HEADERS, json=data)
+    return response.json()
+```
+
+```javascript
+// JavaScript - Hot Jupiter scenario
+async function detectHotJupiter() {
+    const data = {
+        item: {
+            period: 3.5,        // Short orbital period
+            prad: 1.2,          // Jupiter-like radius
+            teq: 1200.0,        // Very hot temperature
+            srad: 1.1,          // Slightly larger star
+            slog_g: 4.3,        // Stellar surface gravity
+            steff: 6000.0,      // Hot star temperature
+            impact: 0.2,        // Impact parameter
+            duration: 2.5,      // Short transit duration
+            depth: 5000.0,      // Deep transit (large planet)
+            models: ["random_forest", "cnn"]
+        }
+    };
+    
+    const response = await fetch(`${BASE_URL}/predict`, {
+        method: 'POST',
+        headers: HEADERS,
+        body: JSON.stringify(data)
+    });
+    return await response.json();
+}
+```
+
 
 ---
 
-## 📊 Input Parameters
+## Input Parameters
 
 | Parameter | Type | Required | Description | Example |
 |-----------|------|----------|-------------|---------|
-| `period` | float | ✅ | Orbital period (days) | 365.0 |
-| `prad` | float | ✅ | Planet radius (Earth radii) | 1.0 |
-| `teq` | float | ✅ | Equilibrium temperature (Kelvin) | 288.0 |
-| `srad` | float | ✅ | Stellar radius (solar radii) | 1.0 |
-| `slog_g` | float | ✅ | Stellar surface gravity (log scale) | 4.44 |
-| `steff` | float | ✅ | Stellar effective temperature (Kelvin) | 5778.0 |
-| `impact` | float | ✅ | Impact parameter | 0.1 |
-| `duration` | float | ✅ | Transit duration (hours) | 5.0 |
-| `depth` | float | ✅ | Transit depth (ppm) | 100.0 |
-| `models` | array | ❌ | Specific models to run | ["random_forest", "cnn"] |
+| `period` | float | Required | Orbital period (days) | 365.0 |
+| `prad` | float | Required | Planet radius (Earth radii) | 1.0 |
+| `teq` | float | Required | Equilibrium temperature (Kelvin) | 288.0 |
+| `srad` | float | Required | Stellar radius (solar radii) | 1.0 |
+| `slog_g` | float | Required | Stellar surface gravity (log scale) | 4.44 |
+| `steff` | float | Required | Stellar effective temperature (Kelvin) | 5778.0 |
+| `impact` | float | Required | Impact parameter | 0.1 |
+| `duration` | float | Required | Transit duration (hours) | 5.0 |
+| `depth` | float | Required | Transit depth (ppm) | 100.0 |
+| `models` | array | Optional | Specific models to run | ["random_forest", "cnn"] |
 
 ### Available Model Options:
 - `"random_forest"`
@@ -156,7 +407,7 @@ curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/
 
 ---
 
-## 📋 Response Format
+## Response Format
 
 ### Successful Prediction Response
 
@@ -228,7 +479,7 @@ The ESI is calculated automatically for all predictions:
 
 ---
 
-## ⚠️ Error Handling
+## Error Handling
 
 ### Missing Parameters Error
 ```json
@@ -269,7 +520,7 @@ The ESI is calculated automatically for all predictions:
 
 ---
 
-## 🔧 Deployment Configuration
+## Deployment Configuration
 
 ### Hardware Specifications
 - **CPU**: 2.0 cores
@@ -295,7 +546,7 @@ The ESI is calculated automatically for all predictions:
 
 ---
 
-## 🛠️ Development
+## Development
 
 ### Local Testing
 ```python
@@ -358,7 +609,7 @@ cerebrium_exobengal-api/  # Root deployment directory
 
 ---
 
-## 📈 Performance
+## Performance
 
 - **Cold Start**: ~10-15 seconds (model loading)
 - **Warm Response**: ~100-500ms
@@ -368,7 +619,7 @@ cerebrium_exobengal-api/  # Root deployment directory
 
 ---
 
-## 🎯 Example Scenarios
+## Example Scenarios
 
 ### 1. Planet Detection
 ```bash
@@ -387,7 +638,7 @@ curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/
 
 ---
 
-## 🌟 Use Cases
+## Use Cases
 
 1. **Exoplanet Research**: Classify newly discovered celestial objects
 2. **Educational Tools**: Demonstrate ML in astronomy
@@ -397,7 +648,7 @@ curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/
 
 ---
 
-## 📚 Additional Resources
+## Additional Resources
 
 - **ExoBengal Package**: [https://pypi.org/project/exobengal/](https://pypi.org/project/exobengal/)
 - **Cerebrium Documentation**: [https://docs.cerebrium.ai](https://docs.cerebrium.ai)
@@ -406,6 +657,6 @@ curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/
 
 ---
 
-**🚀 Start exploring the universe with ExoBengal API!** 🌌
+**Start exploring the universe with ExoBengal API!**
 
-*Deployed with ❤️ on Cerebrium Cloud Platform*
+*Deployed with love on Cerebrium Cloud Platform*

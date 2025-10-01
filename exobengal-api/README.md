@@ -1,87 +1,59 @@
-# ExoBengal API 🌌
-
+# ExoBengal API
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A powerful REST API for exoplanet detection and classification using multiple machine learning models. ExoBengal provides predictions using Random Forest, Decision Tree, K-Nearest Neighbors, and Convolutional Neural Network models.
+A FastAPI-based REST API for exoplanet detection and analysis using machine learning models. This API provides endpoints to predict exoplanet characteristics using various ML algorithms including Random Forest, Decision Tree, K-Nearest Neighbors, and Convolutional Neural Networks.
 
-## 🚀 Features
+## Features
+- **Multiple ML Models**: Support for Random Forest, Decision Tree, KNN, and CNN models
+- **Earth Similarity Index (ESI)**: Calculate how similar an exoplanet is to Earth
+- **Batch Processing**: Analyze multiple exoplanets in a single request
+- **Model Selection**: Choose specific models to run or execute all available models
+- **RESTful API**: Clean, documented endpoints with automatic OpenAPI documentation
 
-- **Multiple ML Models**: Random Forest, Decision Tree, KNN, and CNN
-- **Selective Model Execution**: Run specific models or all models
-- **Earth Similarity Index (ESI)**: Calculate habitability scores
-- **Batch Processing**: Process multiple samples simultaneously
-- **Interactive Documentation**: Auto-generated Swagger UI
-- **Model Information**: Get details about available models and features
-
-## 📁 Project Structure
-
-```
-fastapi_exobengal-api/                 # Root directory
-├── .git/                              # Git repository data
-├── exobengal-api/                     # API application directory
-│   ├── app.py                        # FastAPI application
-│   ├── requirements.txt               # Python dependencies
-│   ├── start_api.sh                   # API startup script
-│   ├── test_api.py                    # API test script
-│   └── test_model_selection.py        # Model selection test script
-├── models/                            # Pre-trained models
-│   ├── random_forest_classifier.pkl  # Random Forest model
-│   ├── decision_tree_classifier.pkl  # Decision Tree model
-│   ├── cnn_model.h5                  # CNN model
-│   ├── knn_model.pkl                 # KNN model
-│   ├── scaler.pkl                    # Feature scaler
-│   └── imputer.pkl                   # Missing value imputer
-├── data/                              # Dataset files
-│   ├── cumulative_2025.09.20_12.15.37.csv        # Cumulative dataset
-│   └── q1_q17_dr24_koi_2025.09.21_22.02.00.csv   # KOI dataset
-├── notebooks/                         # Jupyter notebooks
-│   ├── z.ipynb                       # Model testing notebook
-│   └── zz.ipynb                      # Additional testing notebook
-└── README.md                         # Documentation
-```
-
-## 🛠️ Installation
+## Installation
 
 ### Prerequisites
 
 - Python 3.8+
-- Anaconda/Miniconda (recommended)
+- pip package manager
 
 ### Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/zh-rifat/fastapi_exobengal-api
-   cd exobengal-api
-   ```
+1. Clone the repository:
+```bash
+git clone https://github.com/gazi-faysal-jubayer/ExoBengal
+cd ExoBengal/exobengal-api
+```
 
-2. **Create and activate conda environment**
-   ```bash
-   conda create -n exobengal python=3.10
-   conda activate exobengal
-   ```
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-3. **Install dependencies**
-   ```bash
-   cd exobengal-api
-   pip install -r requirements.txt
-   ```
+3. Ensure model files are present in the `../models/` directory:
+- `random_forest_classifier.pkl`
+- `decision_tree_classifier.pkl`
+- `knn_model.pkl`
+- `cnn_model.h5`
+- `scaler.pkl`
+- `imputer.pkl`
 
-4. **Run the API**
-   ```bash
-   # From the exobengal-api directory
-   python main.py
-   
-   # Or use the startup script
-   chmod +x start_api.sh
-   ./start_api.sh
-   ```
+4. Run the API:
+```bash
+python app.py
+```
 
 The API will be available at `http://localhost:8000`
 
-## 📖 API Documentation
+## API Documentation
+
+### Interactive Documentation
+
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
+##
 
 ### Endpoints
 
@@ -94,7 +66,43 @@ The API will be available at `http://localhost:8000`
 | `POST` | `/predict` | Single exoplanet prediction |
 | `POST` | `/predict/batch` | Batch predictions |
 
-### Input Parameters
+#
+
+### Endpoint Details
+#### `GET /`
+Welcome endpoint with basic API information.
+
+#### `GET /health`
+Health check endpoint to verify API status.
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "message": "ExoBengal API is running successfully"
+}
+```
+
+## `POST /predict`
+Predict exoplanet characteristics using specified or all available models.
+
+**Request Body:**
+```json
+{
+  "period": 365.0,
+  "prad": 1.0,
+  "teq": 288.0,
+  "srad": 1.0,
+  "slog_g": 4.44,
+  "steff": 5778,
+  "impact": 0.1,
+  "duration": 5.0,
+  "depth": 100.0,
+  "models": ["random_forest", "cnn"]
+}
+```
+
+**Input Parameters**
 
 | Parameter | Type | Description | Example |
 |-----------|------|-------------|---------|
@@ -108,119 +116,8 @@ The API will be available at `http://localhost:8000`
 | `duration` | float | Transit duration (hours) | 13.0 |
 | `depth` | float | Transit depth (parts per million) | 84.0 |
 | `models` | array | Optional: specific models to run | ["random_forest", "cnn", "knn", "decision_tree"] |
-
-## 🔬 Usage Examples
-
-### Single Prediction (All Models)
-
-```bash
-curl -X POST "http://localhost:8000/predict" \
--H "Content-Type: application/json" \
--d '{
-  "period": 365.25,
-  "prad": 1.0,
-  "teq": 288.0,
-  "srad": 1.0,
-  "slog_g": 4.44,
-  "steff": 5778,
-  "impact": 0.0,
-  "duration": 13.0,
-  "depth": 84.0
-}'
-```
-
-### Single Prediction (Specific Models)
-
-```bash
-curl -X POST "http://localhost:8000/predict" \
--H "Content-Type: application/json" \
--d '{
-  "period": 365.25,
-  "prad": 1.0,
-  "teq": 288.0,
-  "srad": 1.0,
-  "slog_g": 4.44,
-  "steff": 5778,
-  "impact": 0.0,
-  "duration": 13.0,
-  "depth": 84.0,
-  "models": ["random_forest", "cnn"]
-}'
-```
-
-### Batch Prediction
-
-```bash
-curl -X POST "http://localhost:8000/predict/batch" \
--H "Content-Type: application/json" \
--d '{
-  "earth_like": {
-    "period": 365.25,
-    "prad": 1.0,
-    "teq": 288.0,
-    "srad": 1.0,
-    "slog_g": 4.44,
-    "steff": 5778,
-    "impact": 0.0,
-    "duration": 13.0,
-    "depth": 84.0
-  },
-  "hot_jupiter": {
-    "period": 3.5,
-    "prad": 1.2,
-    "teq": 1200.0,
-    "srad": 1.1,
-    "slog_g": 4.3,
-    "steff": 6000,
-    "impact": 0.2,
-    "duration": 2.5,
-    "depth": 5000.0,
-    "models": ["random_forest"]
-  }
-}'
-```
-
-### Python Client Example
-
-```python
-import requests
-import json
-
-# API endpoint
-url = "http://localhost:8000/predict"
-
-# Earth-like exoplanet data
-data = {
-    "period": 365.25,
-    "prad": 1.0,
-    "teq": 288.0,
-    "srad": 1.0,
-    "slog_g": 4.44,
-    "steff": 5778,
-    "impact": 0.0,
-    "duration": 13.0,
-    "depth": 84.0,
-    "models": ["random_forest", "cnn"]  # Optional
-}
-
-# Make request
-response = requests.post(url, json=data)
-result = response.json()
-
-# Access nested prediction results
-rf_result = result['random_forest']['prediction']
-cnn_result = result['cnn']['prediction']
-
-print(f"Random Forest: {rf_result['prediction']} (Confidence: {rf_result['probability']:.3f})")
-print(f"CNN: {cnn_result['prediction']} (Confidence: {cnn_result['probability']:.3f})")
-print(f"Overall ESI: {result['esi']:.4f}")
-print(f"Models executed: {result['models_executed']}")
-```
-
-## 📊 Response Format
-
-### Single Prediction Response
-
+##
+**Response:**
 ```json
 {
   "random_forest": {
@@ -230,21 +127,8 @@ print(f"Models executed: {result['models_executed']}")
     },
     "model_type": "Random Forest"
   },
-  "decision_tree": {
-    "prediction": {
-      "prediction": "Not a Planet",
-      "probability": 0
-    },
-    "model_type": "Decision Tree"
-  },
-  "knn": {
-    "prediction": {
-      "prediction": "Planet",
-      "probability": 1,
-      "ESI": 0.021
-    },
-    "model_type": "Knn"
-  },
+  "decision_tree": null,
+  "knn": null,
   "cnn": {
     "prediction": {
       "prediction": "Not a Planet",
@@ -263,131 +147,172 @@ print(f"Models executed: {result['models_executed']}")
     "impact": 0.1,
     "duration": 5,
     "depth": 100,
-    "models": null
+    "models": [
+      "random_forest",
+      "cnn"
+    ]
   },
-  "models_executed": ["random_forest", "decision_tree", "knn", "cnn"]
+  "models_executed": [
+    "random_forest",
+    "cnn"
+  ]
 }
 ```
 
-### Batch Prediction Response
+#### `POST /predict/batch`
+Predict multiple exoplanet samples in a single request.
 
+**Request Body:**
 ```json
 {
-  "earth_like": {
-    "predictions": {
-      "random_forest": {
-        "prediction": {
-          "prediction": "Not a Planet",
-          "probability": 0.452
-        },
-        "model_type": "Random Forest"
-      }
-    },
-    "esi": 1,
-    "input_data": { /* input parameters */ },
-    "models_executed": ["random_forest"]
+  "sample1": {
+    "period": 365.0,
+    "prad": 1.0,
+    "teq": 288.0,
+    "srad": 1.0,
+    "slog_g": 4.44,
+    "steff": 5778,
+    "impact": 0.1,
+    "duration": 5.0,
+    "depth": 100.0
   },
-  "hot_jupiter": {
-    "predictions": {
-      "random_forest": {
-        "prediction": {
-          "prediction": "Planet",
-          "probability": 0.823
-        },
-        "model_type": "Random Forest"
-      }
-    },
-    "esi": 0.1234,
-    "input_data": { /* input parameters */ },
-    "models_executed": ["random_forest"]
+  "sample2": {
+    "period": 687.0,
+    "prad": 0.53,
+    "teq": 210.0,
+    "srad": 1.0,
+    "slog_g": 4.44,
+    "steff": 5778,
+    "impact": 0.2,
+    "duration": 6.0,
+    "depth": 150.0,
+    "models": ["random_forest"]
   }
 }
 ```
 
-### Response Fields Explanation
-
-| Field | Description |
-|-------|-------------|
-| `prediction.prediction` | Classification result: "Planet" or "Not a Planet" |
-| `prediction.probability` | Confidence score (0-1) for the prediction |
-| `prediction.ESI` | Earth Similarity Index (only available in KNN model results) |
-| `model_type` | Name of the machine learning model used |
-| `esi` | Overall Earth Similarity Index calculated for the input |
-| `input_data` | Echo of the input parameters sent to the API |
-| `models_executed` | List of models that successfully executed |
-
-### Model-Specific Behaviors
-
-- **Random Forest & Decision Tree**: Return prediction label and probability
-- **KNN**: May include additional ESI calculation in prediction object
-- **CNN**: Returns prediction label and raw probability score
-- **All Models**: Wrapped in consistent structure with model_type identifier
-
-## 🧪 Testing
-
-### Using Jupyter Notebooks
-
-1. **Model Testing**
-   ```bash
-   jupyter notebook notebooks/z.ipynb
-   ```
-
-2. **Additional Testing**
-   ```bash
-   jupyter notebook notebooks/zz.ipynb
-   ```
-
-### API Testing Scripts
-
-1. **Basic API Testing**
-   ```bash
-   cd exobengal-api
-   python test_api.py
-   ```
-
-2. **Model Selection Testing**
-   ```bash
-   cd exobengal-api
-   python test_model_selection.py
-   ```
-
-### Health Check
-
-```bash
-curl http://localhost:8000/health
+**Response:**
+Returns the same structure as `/predict` but with results grouped by sample name:
+```json
+{
+  "sample1": { /* same as /predict response */ },
+  "sample2": { /* same as /predict response */ }
+}
 ```
 
-### Get Model Information
+#### `GET /models/info`
+Get information about available models and input parameters.
 
-```bash
-curl http://localhost:8000/models/info
+**Response:**
+```json
+{
+  "available_models": [
+    {
+      "name": "Random Forest",
+      "type": "Ensemble Learning",
+      "description": "Random Forest Classifier for exoplanet detection"
+    }
+  ],
+  "input_features": [
+    "period: Orbital period (days)",
+    "prad: Planet radius (Earth radii)"
+  ],
+  "additional_calculations": [
+    "ESI: Earth Similarity Index"
+  ]
+}
 ```
 
-## 🤖 Available Models
+## Usage Examples
 
-| Model | Type | Description |
-|-------|------|-------------|
-| **Random Forest** | Ensemble Learning | Random Forest Classifier for robust predictions |
-| **Decision Tree** | Tree-based Learning | Decision Tree Classifier for interpretable results |
-| **K-Nearest Neighbors** | Instance-based Learning | KNN Classifier for similarity-based predictions |
-| **Convolutional Neural Network** | Deep Learning | CNN model for complex pattern recognition |
+### Python Example
 
-## 📈 Earth Similarity Index (ESI)
+```python
+import requests
 
-The API automatically calculates the Earth Similarity Index, which measures how similar an exoplanet is to Earth based on:
-- Planet radius
-- Equilibrium temperature
+# Single prediction
+url = "http://localhost:8000/predict"
+data = {
+    "period": 365.0,
+    "prad": 1.0,
+    "teq": 288.0,
+    "srad": 1.0,
+    "slog_g": 4.44,
+    "steff": 5778,
+    "impact": 0.1,
+    "duration": 5.0,
+    "depth": 100.0,
+    "models": ["random_forest", "cnn"]
+}
 
-ESI ranges from 0 (completely different) to 1 (identical to Earth).
+response = requests.post(url, json=data)
+result = response.json()
+print(f"ESI: {result['esi']}")
+print(f"Random Forest Prediction: {result['random_forest']['prediction']}")
+```
 
+### cURL Example
 
-## 📋 Requirements
+```bash
+curl -X POST "http://localhost:8000/predict" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "period": 365.0,
+       "prad": 1.0,
+       "teq": 288.0,
+       "srad": 1.0,
+       "slog_g": 4.44,
+       "steff": 5778,
+       "impact": 0.1,
+       "duration": 5.0,
+       "depth": 100.0
+     }'
+```
 
-- fastapi==0.104.1
-- uvicorn==0.24.0
-- pydantic==2.4.2
-- scikit-learn==1.6.1
-- tensorflow==2.13.0
-- numpy==1.24.3
-- pandas==2.0.3
-- requests==2.31.0
+### JavaScript Example
+
+```javascript
+const response = await fetch('http://localhost:8000/predict', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    period: 365.0,
+    prad: 1.0,
+    teq: 288.0,
+    srad: 1.0,
+    slog_g: 4.44,
+    steff: 5778,
+    impact: 0.1,
+    duration: 5.0,
+    depth: 100.0,
+    models: ["random_forest"]
+  })
+});
+
+const data = await response.json();
+console.log('Prediction:', data);
+```
+
+## Model Information
+
+### Available Models
+
+1. **Random Forest**: Ensemble learning method using multiple decision trees
+2. **Decision Tree**: Tree-based learning algorithm for classification
+3. **K-Nearest Neighbors (KNN)**: Instance-based learning algorithm
+4. **Convolutional Neural Network (CNN)**: Deep learning model for pattern recognition
+
+### Earth Similarity Index (ESI)
+
+The ESI is calculated based on planet radius and equilibrium temperature, providing a measure of how similar an exoplanet is to Earth (scale: 0-1, where 1 is Earth-like).
+
+## Error Handling
+
+The API returns appropriate HTTP status codes:
+
+- `200`: Success
+- `400`: Bad Request (invalid input parameters)
+- `422`: Validation Error (missing required fields)
+- `500`: Internal Server Error (model execution failure)
