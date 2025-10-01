@@ -343,13 +343,13 @@ cerebrium logs exobengal-api
 
 ### File Structure
 ```
-exobengal-api/           # Root deployment directory
-├── main.py              # Cerebrium function entrypoints
-├── cerebrium.toml       # Cerebrium configuration
-├── requirements.txt     # Dependencies
-├── exobengal-api/       # Original FastAPI code
-│   └── app.py          # FastAPI application (backup)
-└── models/             # ML models directory
+cerebrium_exobengal-api/  # Root deployment directory
+├── main.py               # Cerebrium function entrypoints
+├── cerebrium.toml        # Cerebrium configuration
+├── requirements.txt      # Dependencies
+├── exobengal-api/        # Original FastAPI code
+│   └── app.py            # FastAPI application (backup)
+└── models/               # ML models directory
     ├── random_forest_classifier.pkl
     ├── decision_tree_classifier.pkl
     ├── cnn_model.h5
