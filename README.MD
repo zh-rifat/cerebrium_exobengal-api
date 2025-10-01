@@ -434,7 +434,7 @@ curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-e08fc93f/exobengal-api/
 
 ## 📚 Additional Resources
 
-- **ExoBengal Package**: Main ML library for exoplanet detection
+- **ExoBengal Package**: [https://pypi.org/project/exobengal/](https://pypi.org/project/exobengal/)
 - **Cerebrium Documentation**: [https://docs.cerebrium.ai](https://docs.cerebrium.ai)
 - **NASA Exoplanet Archive**: Source of training data
 - **Kepler Space Telescope**: Data source for model training
